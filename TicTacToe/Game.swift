@@ -106,7 +106,7 @@ class Game {
             }
         }
 
-        if gameState.freeSpaces == 0 {
+        if gameState.countFreeSpaces == 0 {
             delegate?.gameFinished(result: nil, positions: nil)
             canPlay = false
             return
@@ -115,7 +115,7 @@ class Game {
 }
 
 extension Dictionary where Value == Game.CellState {
-    var freeSpaces: Int {
+    var countFreeSpaces: Int {
         return reduce(0) {$0 + ($1.1 == .free ? 1 : 0)}
     }
 }
