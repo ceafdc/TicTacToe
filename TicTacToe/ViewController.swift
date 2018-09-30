@@ -21,6 +21,11 @@ class ViewController: UIViewController {
         game.gameState[Game.CellPosition(row: 1, column: 2)] = .nought
 
         gameView.gameState = game.gameState
+        gameView.positionTouchedAction = positionTouched(_:)
+    }
+
+    func positionTouched(_ position: Game.CellPosition)  {
+        print(position)
     }
 }
 

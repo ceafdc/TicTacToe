@@ -16,9 +16,29 @@ class GameView: UIView {
         }
     }
 
+    var positionTouchedAction: ((Game.CellPosition)->Void)?
+
     private let padding: CGFloat = 0.05
     private var gridSize: CGFloat {
         return min(bounds.width, bounds.height)/3
+    }
+
+    convenience init() {
+        self.init(frame: .zero)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+
+    func setup() {
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapped(sender:))))
     }
 
     fileprivate func drawVerticalLines() {
@@ -94,5 +114,19 @@ class GameView: UIView {
         for (pos, state) in gameState {
             draw(state, at: pos)
         }
+    }
+
+    // MARK: - User Interaction
+
+    @objc
+    func tapped(sender: UITapGestureRecognizer) {
+        let location = sender.location(in: self)
+        var x = Int(floor(location.x / gridSize))
+        var y = Int(floor(location.y / gridSize))
+
+        x = min(max(0, x), 2)
+        y = min(max(0, y), 2)
+
+        positionTouchedAction?(Game.CellPosition(row: y, column: x))
     }
 }
