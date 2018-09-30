@@ -114,9 +114,13 @@ class Game {
     }
 }
 
-extension Dictionary where Value == Game.CellState {
+extension Dictionary where Key == Game.CellPosition, Value == Game.CellState {
     var countFreeSpaces: Int {
         return reduce(0) {$0 + ($1.1 == .free ? 1 : 0)}
+    }
+
+    var freeSpaces: [Game.CellPosition] {
+        return (filter {$0.value == .free}).map {$0.0}
     }
 }
 
