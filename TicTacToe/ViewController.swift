@@ -18,7 +18,7 @@ class ViewController: UIViewController {
 
 
         game.delegate = self
-        gameView.gameState = game.gameState
+        gameView.state = game.gameState
         gameView.positionTouchedAction = positionTouched(_:)
     }
 
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
 
 extension ViewController: GameDelegate {
     func stateChanged(game: Game) {
-        gameView.gameState = game.gameState
+        gameView.state = game.gameState
     }
 }
 

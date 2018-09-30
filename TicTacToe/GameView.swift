@@ -10,7 +10,7 @@ import UIKit
 
 class GameView: UIView {
 
-    var gameState: Game.GameState? {
+    var state: Game.GameState? {
         didSet {
             setNeedsDisplay()
         }
@@ -109,7 +109,7 @@ class GameView: UIView {
     override func draw(_ rect: CGRect) {
         super.draw(rect)
 
-        guard let gameState = gameState else {return}
+        guard let gameState = state else {return}
 
         drawVerticalLines()
         drawHorizontalLines()
