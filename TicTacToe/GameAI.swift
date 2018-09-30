@@ -58,7 +58,7 @@ class GameAI {
                 results.append(score)
                 _state[position] = .free
             }
-            
+
             if max {
                 score = results.max()!
             } else {
