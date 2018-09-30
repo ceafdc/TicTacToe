@@ -38,15 +38,25 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10a-kT-mk8">
+                                <rect key="frame" x="259" y="565" width="96" height="30"/>
+                                <state key="normal" title="Make AI Move"/>
+                                <connections>
+                                    <action selector="makeAIMove:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Z2O-z0-AAj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="A1C-el-Avv" firstAttribute="centerY" secondItem="7Fq-JV-6DL" secondAttribute="centerY" id="7h9-ku-i4e"/>
+                            <constraint firstItem="10a-kT-mk8" firstAttribute="trailing" secondItem="A1C-el-Avv" secondAttribute="trailing" id="Er3-wD-qt6"/>
                             <constraint firstItem="k9F-N9-8AJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="HgM-Am-Y7D"/>
                             <constraint firstItem="k9F-N9-8AJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="I4D-In-y9i"/>
                             <constraint firstItem="A1C-el-Avv" firstAttribute="trailing" secondItem="k9F-N9-8AJ" secondAttribute="trailing" id="QJ1-2h-hih"/>
+                            <constraint firstItem="10a-kT-mk8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" symbolic="YES" id="S3F-1A-Ksa"/>
                             <constraint firstItem="7Fq-JV-6DL" firstAttribute="leading" secondItem="k9F-N9-8AJ" secondAttribute="leading" id="SOC-ME-AXT"/>
                             <constraint firstItem="A1C-el-Avv" firstAttribute="top" secondItem="k9F-N9-8AJ" secondAttribute="bottom" constant="8" id="fZy-7F-5Ia"/>
+                            <constraint firstItem="10a-kT-mk8" firstAttribute="top" secondItem="A1C-el-Avv" secondAttribute="bottom" constant="8" id="h36-0d-wsR"/>
                             <constraint firstItem="k9F-N9-8AJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jZk-bB-zDx"/>
                             <constraint firstItem="A1C-el-Avv" firstAttribute="leading" secondItem="7Fq-JV-6DL" secondAttribute="trailing" constant="20" id="qf0-I5-Crg"/>
                         </constraints>

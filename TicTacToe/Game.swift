@@ -41,6 +41,7 @@ class Game {
     typealias GameState = Dictionary<CellPosition, CellState>
 
 
+    var aiEnabled = false
     var canPlay = true
     var gameState: GameState {
         didSet {
@@ -50,7 +51,7 @@ class Game {
     var currentPlayer: Player
     var delegate: GameDelegate?
 
-    lazy var winingPositions: [[CellPosition]] = {
+    static var winingPositions: [[CellPosition]] = {
         var positions: [[CellPosition]] = []
 
         positions.append((0..<3).map {CellPosition(row: $0, column: 0)})
@@ -65,7 +66,6 @@ class Game {
 
         positions.append((0..<3).map {CellPosition(row: $0, column: (2 - $0))})
 
-        print(positions)
         return positions
     }()
 
@@ -86,31 +86,48 @@ class Game {
         canPlay = true
     }
 
+    func makeAIMove() {
+        guard canPlay, gameState.countFreeSpaces > 0 else {return}
+        self.makeMove(at: GameAI.solveGame(state: gameState, for: currentPlayer))
+    }
+
     func makeMove(at position: CellPosition) {
         guard canPlay, gameState[position] == .free else {return}
 
         gameState[position] = .occupied(currentPlayer)
         currentPlayer = currentPlayer.other
         checkGameFinished()
+        if !canPlay {
+            return
+        }
+        if currentPlayer == .nought && aiEnabled {
+            self.makeMove(at: GameAI.solveGame(state: gameState, for: currentPlayer))
+        }
     }
 
     func checkGameFinished() {
+        let (finished, player, positions) = Game.checkGameFinished(gameState: gameState)
+        if finished {
+            delegate?.gameFinished(result: player, positions: positions)
+            canPlay = false
+        }
+    }
+
+    static func checkGameFinished(gameState: GameState) -> (Bool, Player?, [CellPosition]?){
         for positions in winingPositions {
             let states = positions.map {gameState[$0] ?? .free}
             for player in Player.allPlayers {
                 if states.count(state: .occupied(player)) == 3 {
-                    delegate?.gameFinished(result: player, positions: positions)
-                    canPlay = false
-                    return
+                    return (true, player, positions)
                 }
             }
         }
 
         if gameState.countFreeSpaces == 0 {
-            delegate?.gameFinished(result: nil, positions: nil)
-            canPlay = false
-            return
+            return (true, nil, nil)
         }
+
+        return (false, nil, nil)
     }
 }
 

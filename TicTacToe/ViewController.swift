@@ -34,6 +34,10 @@ class ViewController: UIViewController {
         gameView.winningPositions = nil
         game.reset()
     }
+
+    @IBAction func makeAIMove(_ sender: UIButton) {
+        game.makeAIMove()
+    }
 }
 
 extension ViewController: GameDelegate {
