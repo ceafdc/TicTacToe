@@ -12,6 +12,13 @@ class Game {
     enum Player {
         case cross
         case nought
+
+        var other: Player {
+            switch self {
+            case .cross: return .nought
+            case .nought: return .cross
+            }
+        }
     }
 
     enum CellState: Equatable {
@@ -40,5 +47,11 @@ class Game {
 
         currentPlayer = .cross
     }
+
+    func makeMove(at position: CellPosition) {
+        guard gameState[position] == .free else {return}
+
+        gameState[position] = .occupied(currentPlayer)
+        currentPlayer = currentPlayer.other
     }
 }
