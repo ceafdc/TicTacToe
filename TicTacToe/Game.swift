@@ -10,12 +10,15 @@ import UIKit
 
 protocol GameDelegate {
     func stateChanged(game: Game)
+    func gameFinished(result: Game.Player?)
 }
 
 class Game {
     enum Player {
         case cross
         case nought
+
+        static let allPlayers: [Player] = [.cross, .nought]
 
         var other: Player {
             switch self {
@@ -38,6 +41,7 @@ class Game {
     typealias GameState = Dictionary<CellPosition, CellState>
 
 
+    var canPlay = true
     var gameState: GameState {
         didSet {
             delegate?.stateChanged(game: self)
@@ -45,6 +49,25 @@ class Game {
     }
     var currentPlayer: Player
     var delegate: GameDelegate?
+
+    lazy var winingPositions: [[CellPosition]] = {
+        var positions: [[CellPosition]] = []
+
+        positions.append((0..<3).map {CellPosition(row: $0, column: 0)})
+        positions.append((0..<3).map {CellPosition(row: $0, column: 1)})
+        positions.append((0..<3).map {CellPosition(row: $0, column: 2)})
+
+        positions.append((0..<3).map {CellPosition(row: 0, column: $0)})
+        positions.append((0..<3).map {CellPosition(row: 1, column: $0)})
+        positions.append((0..<3).map {CellPosition(row: 2, column: $0)})
+
+        positions.append((0..<3).map {CellPosition(row: $0, column: $0)})
+
+        positions.append((0..<3).map {CellPosition(row: $0, column: (2 - $0))})
+
+        print(positions)
+        return positions
+    }()
 
     init() {
         gameState = [:]
@@ -60,12 +83,45 @@ class Game {
         }
 
         currentPlayer = .cross
+        canPlay = true
     }
 
     func makeMove(at position: CellPosition) {
-        guard gameState[position] == .free else {return}
+        guard canPlay, gameState[position] == .free else {return}
 
         gameState[position] = .occupied(currentPlayer)
         currentPlayer = currentPlayer.other
+        checkGameFinished()
+    }
+
+    func checkGameFinished() {
+        for positions in winingPositions {
+            let states = positions.map {gameState[$0] ?? .free}
+            for player in Player.allPlayers {
+                if states.count(state: .occupied(player)) == 3 {
+                    delegate?.gameFinished(result: player)
+                    canPlay = false
+                    return
+                }
+            }
+        }
+
+        if gameState.freeSpaces == 0 {
+            delegate?.gameFinished(result: nil)
+            canPlay = false
+            return
+        }
+    }
+}
+
+extension Dictionary where Value == Game.CellState {
+    var freeSpaces: Int {
+        return reduce(0) {$0 + ($1.1 == .free ? 1 : 0)}
+    }
+}
+
+extension Array where Iterator.Element == Game.CellState {
+    func count(state: Game.CellState) -> Int {
+        return reduce(0) {$0 + ($1 == state ? 1 : 0)}
     }
 }
