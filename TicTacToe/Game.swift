@@ -53,17 +53,19 @@ class Game {
     static var winingPositions: [[CellPosition]] = {
         var positions: [[CellPosition]] = []
 
-        positions.append((0..<3).map {CellPosition(row: $0, column: 0)})
-        positions.append((0..<3).map {CellPosition(row: $0, column: 1)})
-        positions.append((0..<3).map {CellPosition(row: $0, column: 2)})
+        let range = 0..<3
 
-        positions.append((0..<3).map {CellPosition(row: 0, column: $0)})
-        positions.append((0..<3).map {CellPosition(row: 1, column: $0)})
-        positions.append((0..<3).map {CellPosition(row: 2, column: $0)})
+        positions.append(range.map {CellPosition(row: $0, column: 0)})
+        positions.append(range.map {CellPosition(row: $0, column: 1)})
+        positions.append(range.map {CellPosition(row: $0, column: 2)})
 
-        positions.append((0..<3).map {CellPosition(row: $0, column: $0)})
+        positions.append(range.map {CellPosition(row: 0, column: $0)})
+        positions.append(range.map {CellPosition(row: 1, column: $0)})
+        positions.append(range.map {CellPosition(row: 2, column: $0)})
 
-        positions.append((0..<3).map {CellPosition(row: $0, column: (2 - $0))})
+        positions.append(range.map {CellPosition(row: $0, column: $0)})
+
+        positions.append(range.map {CellPosition(row: $0, column: (2 - $0))})
 
         return positions
     }()
