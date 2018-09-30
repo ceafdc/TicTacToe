@@ -92,21 +92,16 @@ class GameView: UIView {
         circle.lineWidth = 3
         circle.stroke()
     }
-
-    fileprivate func draw(_ state: Game.CellState, at position: Game.CellPosition) {
-        guard state != .free else {return}
+    
+    fileprivate func draw(_ player: Game.Player, at position: Game.CellPosition) {
         let ctx = UIGraphicsGetCurrentContext()!
         ctx.saveGState()
         ctx.translateBy(x: (CGFloat(position.column) + 0.5) * gridSize, y: (CGFloat(position.row) + 0.5) * gridSize)
         ctx.scaleBy(x: 0.8, y: 0.8)
-
-        switch state {
-        case .free: fatalError("Invalid State")
-        case .occupied(let player):
-            switch player {
-            case .cross: drawCross()
-            case .nought: drawNought()
-            }
+        
+        switch player {
+        case .cross: drawCross()
+        case .nought: drawNought()
         }
 
         ctx.restoreGState()

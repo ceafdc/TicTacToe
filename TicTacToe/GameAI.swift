@@ -25,10 +25,10 @@ class GameAI {
         var _state = state
         var results: [(Int, Game.CellPosition)] = []
         for position in state.freeSpaces {
-            _state[position] = .occupied(player)
+            _state[position] = player
             let score = minimax(state: _state, player: player.other, max: false, targetPlayer: player)
             results.append((score, position))
-            _state[position] = .free
+            _state[position] = nil
         }
         return results.shuffled().max {$0.0 < $1.0}!.1
     }
@@ -53,10 +53,10 @@ class GameAI {
             var _state = state
             var results: [Int] = []
             for position in state.freeSpaces {
-                _state[position] = .occupied(player)
+                _state[position] = player
                 let score = minimax(state: _state, player: player.other, max: !max, targetPlayer: targetPlayer)
                 results.append(score)
-                _state[position] = .free
+                _state[position] = nil
             }
 
             if max {

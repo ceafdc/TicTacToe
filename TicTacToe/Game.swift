@@ -28,17 +28,16 @@ class Game {
         }
     }
 
-    enum CellState: Equatable {
-        case free
-        case occupied(Player)
-    }
-
     struct CellPosition: Hashable {
         let row: Int
         let column: Int
+
+        static var allPositions: [CellPosition] {
+            return (0..<9).map {CellPosition(row: $0/3, column: $0%3)}
+        }
     }
 
-    typealias GameState = Dictionary<CellPosition, CellState>
+    typealias GameState = [CellPosition: Player]
 
 
     var aiEnabled = false
@@ -76,10 +75,8 @@ class Game {
     }
 
     func reset() {
-        for i in 0..<3 {
-            for j in 0..<3 {
-                gameState[CellPosition(row: i, column: j)] = .free
-            }
+        for (position, _) in gameState {
+            gameState[position] = nil
         }
 
         currentPlayer = .cross
@@ -92,9 +89,9 @@ class Game {
     }
 
     func makeMove(at position: CellPosition) {
-        guard canPlay, gameState[position] == .free else {return}
+        guard canPlay, gameState[position] == nil else {return}
 
-        gameState[position] = .occupied(currentPlayer)
+        gameState[position] = currentPlayer
         currentPlayer = currentPlayer.other
         checkGameFinished()
         if currentPlayer == .nought && aiEnabled {
@@ -112,9 +109,9 @@ class Game {
 
     static func checkGameFinished(gameState: GameState) -> (Bool, Player?, [CellPosition]?){
         for positions in winingPositions {
-            let states = positions.map {gameState[$0] ?? .free}
+            let states = positions.map {gameState[$0]}
             for player in Player.allPlayers {
-                if states.count(state: .occupied(player)) == 3 {
+                if states.count(state: player) == 3 {
                     return (true, player, positions)
                 }
             }
@@ -128,27 +125,24 @@ class Game {
     }
 }
 
-extension Dictionary where Key == Game.CellPosition, Value == Game.CellState {
+extension Dictionary where Key == Game.CellPosition, Value == Game.Player {
     var countFreeSpaces: Int {
-        return reduce(0) {$0 + ($1.1 == .free ? 1 : 0)}
+        return 9 - count
     }
 
     var freeSpaces: [Game.CellPosition] {
-        return (filter {$0.value == .free}).map {$0.0}
+        return Game.CellPosition.allPositions.filter {self[$0] == nil}
     }
 
     func serialized() -> String {
         var retVal: [String] = []
-        for i in 0..<3 {
-            for j in 0..<3 {
-                let position = Game.CellPosition(row: i, column: j)
-                switch self[position]! {
-                case .free: retVal.append(" ")
-                case .occupied(let player):
-                    switch player {
-                    case .cross: retVal.append("X")
-                    case .nought: retVal.append("O")
-                    }
+        for position in Game.CellPosition.allPositions {
+            switch self[position] {
+            case .none: retVal.append(" ")
+            case .some(let player):
+                switch player {
+                case .cross: retVal.append("X")
+                case .nought: retVal.append("O")
                 }
             }
         }
@@ -157,8 +151,8 @@ extension Dictionary where Key == Game.CellPosition, Value == Game.CellState {
     }
 }
 
-extension Array where Iterator.Element == Game.CellState {
-    func count(state: Game.CellState) -> Int {
+extension Array where Iterator.Element == Game.Player? {
+    func count(state: Game.Player) -> Int {
         return reduce(0) {$0 + ($1 == state ? 1 : 0)}
     }
 }
