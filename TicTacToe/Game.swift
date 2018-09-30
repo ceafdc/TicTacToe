@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol GameDelegate {
+    func stateChanged(game: Game)
+}
+
 class Game {
     enum Player {
         case cross
@@ -36,6 +40,7 @@ class Game {
 
     var gameState: GameState
     var currentPlayer: Player
+    var delegate: GameDelegate?
 
     init() {
         gameState = [:]
@@ -53,5 +58,6 @@ class Game {
 
         gameState[position] = .occupied(currentPlayer)
         currentPlayer = currentPlayer.other
+        delegate?.stateChanged(game: self)
     }
 }

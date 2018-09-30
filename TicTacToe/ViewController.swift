@@ -17,15 +17,19 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
 
-        game.gameState[Game.CellPosition(row: 0, column: 0)] = .occupied(.cross)
-        game.gameState[Game.CellPosition(row: 1, column: 2)] = .occupied(.nought)
-
+        game.delegate = self
         gameView.gameState = game.gameState
         gameView.positionTouchedAction = positionTouched(_:)
     }
 
     func positionTouched(_ position: Game.CellPosition)  {
-        print(position)
+        game.makeMove(at: position)
+    }
+}
+
+extension ViewController: GameDelegate {
+    func stateChanged(game: Game) {
+        gameView.gameState = game.gameState
     }
 }
 
