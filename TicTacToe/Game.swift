@@ -23,6 +23,7 @@ class Game {
         let row: Int
         let column: Int
     }
+
     typealias GameState = Dictionary<CellPosition, CellState>
 
 
