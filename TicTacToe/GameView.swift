@@ -96,8 +96,11 @@ class GameView: UIView {
 
         switch state {
         case .free: fatalError("Invalid State")
-        case .cross: drawCross()
-        case .nought: drawNought()
+        case .occupied(let player):
+            switch player {
+            case .cross: drawCross()
+            case .nought: drawNought()
+            }
         }
 
         ctx.restoreGState()

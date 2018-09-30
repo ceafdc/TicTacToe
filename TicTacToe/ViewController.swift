@@ -17,8 +17,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
 
-        game.gameState[Game.CellPosition(row: 0, column: 0)] = .cross
-        game.gameState[Game.CellPosition(row: 1, column: 2)] = .nought
+        game.gameState[Game.CellPosition(row: 0, column: 0)] = .occupied(.cross)
+        game.gameState[Game.CellPosition(row: 1, column: 2)] = .occupied(.nought)
 
         gameView.gameState = game.gameState
         gameView.positionTouchedAction = positionTouched(_:)

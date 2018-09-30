@@ -9,11 +9,16 @@
 import UIKit
 
 class Game {
-    enum CellState {
-        case free
+    enum Player {
         case cross
         case nought
     }
+
+    enum CellState: Equatable {
+        case free
+        case occupied(Player)
+    }
+
     struct CellPosition: Hashable {
         let row: Int
         let column: Int
@@ -22,6 +27,7 @@ class Game {
 
 
     var gameState: GameState
+    var currentPlayer: Player
 
     init() {
         gameState = [:]
@@ -30,5 +36,8 @@ class Game {
                 gameState[CellPosition(row: i, column: j)] = .free
             }
         }
+
+        currentPlayer = .cross
+    }
     }
 }
