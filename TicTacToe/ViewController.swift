@@ -22,7 +22,5 @@ class ViewController: UIViewController {
 
         gameView.gameState = game.gameState
     }
-
-
 }
 
