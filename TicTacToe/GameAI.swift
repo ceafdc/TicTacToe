@@ -10,7 +10,18 @@ import UIKit
 
 class GameAI {
 
-    static func solveGame(state: Game.GameState, for player: Game.Player) -> Game.CellPosition {
+    static let shared = GameAI()
+
+    struct Query: Hashable {
+        let state: String
+        let player: String
+        let max: Bool
+        let targetPlayer: String
+    }
+
+    var memo: [Query: Int] = [:]
+
+    func solveGame(state: Game.GameState, for player: Game.Player) -> Game.CellPosition {
         var _state = state
         var results: [(Int, Game.CellPosition)] = []
         for position in state.freeSpaces {
@@ -22,27 +33,40 @@ class GameAI {
         return results.shuffled().max {$0.0 < $1.0}!.1
     }
 
-    static func minimax(state: Game.GameState, player: Game.Player, max: Bool, targetPlayer: Game.Player) -> Int {
+    func minimax(state: Game.GameState, player: Game.Player, max: Bool, targetPlayer: Game.Player) -> Int {
+        let query = Query(
+            state: state.serialized(),
+            player: player.rawValue,
+            max: max,
+            targetPlayer: targetPlayer.rawValue)
+        if let score = memo[query] {
+            return score
+        }
         let (finished, winningPlayer, _) = Game.checkGameFinished(gameState: state)
+        let score: Int
         if finished {
             switch winningPlayer {
-            case .none: return 0
-            case .some(let p): return p == targetPlayer ? 1 : -1
+            case .none: score = 0
+            case .some(let p): score = p == targetPlayer ? 1 : -1
+            }
+        } else {
+            var _state = state
+            var results: [Int] = []
+            for position in state.freeSpaces {
+                _state[position] = .occupied(player)
+                let score = minimax(state: _state, player: player.other, max: !max, targetPlayer: targetPlayer)
+                results.append(score)
+                _state[position] = .free
+            }
+            
+            if max {
+                score = results.max()!
+            } else {
+                score = results.min()!
             }
         }
-        var _state = state
-        var results: [Int] = []
-        for position in state.freeSpaces {
-            _state[position] = .occupied(player)
-            let score = minimax(state: _state, player: player.other, max: !max, targetPlayer: targetPlayer)
-            results.append(score)
-            _state[position] = .free
-        }
 
-        if max {
-            return results.max()!
-        } else {
-            return results.min()!
-        }
+        memo[query] = score
+        return score
     }
 }

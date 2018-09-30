@@ -14,7 +14,7 @@ protocol GameDelegate {
 }
 
 class Game {
-    enum Player {
+    enum Player: String {
         case cross
         case nought
 
@@ -88,7 +88,7 @@ class Game {
 
     func makeAIMove() {
         guard canPlay, gameState.countFreeSpaces > 0 else {return}
-        self.makeMove(at: GameAI.solveGame(state: gameState, for: currentPlayer))
+        self.makeMove(at: GameAI.shared.solveGame(state: gameState, for: currentPlayer))
     }
 
     func makeMove(at position: CellPosition) {
@@ -97,11 +97,8 @@ class Game {
         gameState[position] = .occupied(currentPlayer)
         currentPlayer = currentPlayer.other
         checkGameFinished()
-        if !canPlay {
-            return
-        }
         if currentPlayer == .nought && aiEnabled {
-            self.makeMove(at: GameAI.solveGame(state: gameState, for: currentPlayer))
+            makeAIMove()
         }
     }
 
@@ -138,6 +135,25 @@ extension Dictionary where Key == Game.CellPosition, Value == Game.CellState {
 
     var freeSpaces: [Game.CellPosition] {
         return (filter {$0.value == .free}).map {$0.0}
+    }
+
+    func serialized() -> String {
+        var retVal: [String] = []
+        for i in 0..<3 {
+            for j in 0..<3 {
+                let position = Game.CellPosition(row: i, column: j)
+                switch self[position]! {
+                case .free: retVal.append(" ")
+                case .occupied(let player):
+                    switch player {
+                    case .cross: retVal.append("X")
+                    case .nought: retVal.append("O")
+                    }
+                }
+            }
+        }
+
+        return retVal.joined()
     }
 }
 
