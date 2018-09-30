@@ -38,12 +38,21 @@ class Game {
     typealias GameState = Dictionary<CellPosition, CellState>
 
 
-    var gameState: GameState
+    var gameState: GameState {
+        didSet {
+            delegate?.stateChanged(game: self)
+        }
+    }
     var currentPlayer: Player
     var delegate: GameDelegate?
 
     init() {
         gameState = [:]
+        currentPlayer = .cross
+        self.reset()
+    }
+
+    func reset() {
         for i in 0..<3 {
             for j in 0..<3 {
                 gameState[CellPosition(row: i, column: j)] = .free
@@ -58,6 +67,5 @@ class Game {
 
         gameState[position] = .occupied(currentPlayer)
         currentPlayer = currentPlayer.other
-        delegate?.stateChanged(game: self)
     }
 }
