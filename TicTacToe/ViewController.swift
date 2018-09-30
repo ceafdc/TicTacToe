@@ -31,16 +31,19 @@ class ViewController: UIViewController {
     // MARK: - User Interaction
     @IBAction func reset(_ sender: UIButton) {
         gameLabel.text = nil
+        gameView.winningPositions = nil
         game.reset()
     }
 }
 
 extension ViewController: GameDelegate {
-    func gameFinished(result: Game.Player?) {
+
+    func gameFinished(result: Game.Player?, positions: [Game.CellPosition]?) {
         switch result {
         case .none: gameLabel.text = "Draw"
         case .some(let player): gameLabel.text = "\(player) won"
         }
+        gameView.winningPositions = positions
     }
 
     func stateChanged(game: Game) {

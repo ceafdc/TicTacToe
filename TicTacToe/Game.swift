@@ -10,7 +10,7 @@ import UIKit
 
 protocol GameDelegate {
     func stateChanged(game: Game)
-    func gameFinished(result: Game.Player?)
+    func gameFinished(result: Game.Player?, positions: [Game.CellPosition]?)
 }
 
 class Game {
@@ -99,7 +99,7 @@ class Game {
             let states = positions.map {gameState[$0] ?? .free}
             for player in Player.allPlayers {
                 if states.count(state: .occupied(player)) == 3 {
-                    delegate?.gameFinished(result: player)
+                    delegate?.gameFinished(result: player, positions: positions)
                     canPlay = false
                     return
                 }
@@ -107,7 +107,7 @@ class Game {
         }
 
         if gameState.freeSpaces == 0 {
-            delegate?.gameFinished(result: nil)
+            delegate?.gameFinished(result: nil, positions: nil)
             canPlay = false
             return
         }

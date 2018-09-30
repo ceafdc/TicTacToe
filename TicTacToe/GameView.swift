@@ -10,6 +10,12 @@ import UIKit
 
 class GameView: UIView {
 
+    var winningPositions: [Game.CellPosition]? {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
     var state: Game.GameState? {
         didSet {
             setNeedsDisplay()
@@ -106,6 +112,35 @@ class GameView: UIView {
         ctx.restoreGState()
     }
 
+    fileprivate func drawWinningPositions() {
+        guard let winningPositions = winningPositions, winningPositions.count >= 2 else {return}
+
+        let positions = winningPositions.sorted { (p1, p2) -> Bool in
+            let (x1, y1) = (p1.column, p1.row)
+            let (x2, y2) = (p2.column, p2.row)
+
+            if y1 < y2 {
+                return true
+            } else if y2 > y1 {
+                return false
+            } else {
+                return x1 < x2
+            }
+        }
+
+        let first = positions.first!
+        let last = positions.last!
+
+        let line = UIBezierPath()
+        line.move(to: CGPoint(x: (CGFloat(first.column) + 0.5) * gridSize, y: (CGFloat(first.row) + 0.5) * gridSize))
+        line.addLine(to: CGPoint(x: (CGFloat(last.column) + 0.5) * gridSize, y: (CGFloat(last.row) + 0.5) * gridSize))
+        line.lineWidth = 5
+
+        UIColor.red.setStroke()
+
+        line.stroke()
+    }
+
     override func draw(_ rect: CGRect) {
         super.draw(rect)
 
@@ -117,6 +152,7 @@ class GameView: UIView {
         for (pos, state) in gameState {
             draw(state, at: pos)
         }
+        drawWinningPositions()
     }
 
     // MARK: - User Interaction
