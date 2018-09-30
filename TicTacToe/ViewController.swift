@@ -10,9 +10,17 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    let game = Game()
+    @IBOutlet weak var gameView: GameView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+
+        game.gameState[Game.CellPosition(row: 0, column: 0)] = .cross
+        game.gameState[Game.CellPosition(row: 1, column: 2)] = .nought
+
+        gameView.gameState = game.gameState
     }
 
 
