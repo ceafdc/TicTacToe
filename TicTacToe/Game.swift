@@ -136,10 +136,68 @@ extension Dictionary where Key == Game.CellPosition, Value == Game.Player {
         return Game.CellPosition.allPositions.filter {self[$0] == nil}
     }
 
+    var centerOfMass: (Double, Double) {
+        var centerOfMass: (Double, Double) = (0, 0)
+        var total = 0
+        for position in Game.CellPosition.allPositions {
+            if let player = self[position] {
+                let mass: Double
+                switch player {
+                case .cross: mass = 3
+                case .nought: mass = 2
+                }
+                centerOfMass.0 += mass * (Double(position.column) - 1)
+                centerOfMass.1 += mass * (Double(position.row) - 1)
+                total += 1
+            }
+        }
+        centerOfMass.0 /= Double(Swift.max(1, total))
+        centerOfMass.1 /= Double(Swift.max(1, total))
+
+        return centerOfMass
+    }
+
+    func rotated() -> [Game.CellPosition: Game.Player] {
+        var cm = centerOfMass
+        if abs(cm.0) < Double.ulpOfOne && abs(cm.1) < Double.ulpOfOne { // do nothing
+            return self
+        }
+        var copy = self
+        if cm.0 < 0 {  // flip X
+            for position in Game.CellPosition.allPositions {
+                let newPosition = Game.CellPosition(row: position.row, column: 2 - position.column)
+                copy[newPosition] = self[position]
+            }
+            cm.0 *= -1
+        }
+
+        if cm.1 < 0 { // flip Y
+            for position in Game.CellPosition.allPositions {
+                let newPosition = Game.CellPosition(row: 2 - position.row, column: position.column)
+                copy[newPosition] = self[position]
+            }
+            cm.1 *= -1
+        }
+
+        if cm.0 > cm.1 {
+            for position in Game.CellPosition.allPositions {
+                let newPosition = Game.CellPosition(row: position.column, column: position.row)
+                copy[newPosition] = self[position]
+            }
+            cm = (cm.1, cm.0)
+        }
+
+        return copy
+    }
+
     func serialized() -> String {
+        var copy = self
+
+        copy = copy.rotated()
+
         var retVal: [String] = []
         for position in Game.CellPosition.allPositions {
-            switch self[position] {
+            switch copy[position] {
             case .none: retVal.append(" ")
             case .some(let player):
                 switch player {
